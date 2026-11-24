@@ -5,10 +5,10 @@ services:
     restart: unless-stopped
 
     environment:
-      MYSQL_ROOT_PASSWORD: Passwor&1
-      MYSQL_DATABASE: eventhub
-      MYSQL_USER: eventhub
-      MYSQL_PASSWORD: Password&1
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
     ports:
       - "3307:3306"
@@ -21,11 +21,14 @@ services:
     restart: always
     ports:
       - 8080:8080
+    depends_on:
+        - mysql
   web:
       build: .
       container_name: eventhub_web
       restart: unless-stopped
-      env_file: .env
+      env_file: 
+        - .env
       environment:
         DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?charset=utf8mb4
       ports:
