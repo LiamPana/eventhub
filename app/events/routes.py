@@ -34,7 +34,6 @@ def get_visible_event(event_id):
     return event
 
 
-# ---------------------------------------------------------------- pubbliche
 @bp.route("/")
 def list_events():
     q = request.args.get("q", "").strip()
@@ -58,7 +57,6 @@ def detail(event_id):
     )
 
 
-# ------------------------------------------------------------------ acquisti
 @bp.route("/<int:event_id>/buy", methods=["POST"])
 @login_required
 def buy(event_id):
@@ -100,7 +98,6 @@ def ticket_qr(code):
     return send_file(buffer, mimetype="image/png")
 
 
-# ------------------------------------------------------------ check-in (staff)
 @bp.route("/checkin", methods=["GET", "POST"])
 @role_required(Role.STAFF, Role.ORGANIZER)
 def checkin():
@@ -116,7 +113,6 @@ def checkin():
     return render_template("events/checkin.html", form=form, ticket=ticket)
 
 
-# ------------------------------------------------- gestione (organizzatore)
 @bp.route("/mine")
 @role_required(Role.ORGANIZER)
 def manage():
