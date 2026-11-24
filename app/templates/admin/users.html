@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Utenti · EventHub{% endblock %}
+{% block content %}
+  <h1>Gestione utenti</h1>
+  <table>
+    <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Ruolo</th><th></th></tr></thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td>
+        <td>
+          {% if u.id != current_user.id %}
+          <form method="post" action="{{ url_for('admin.set_role', user_id=u.id) }}" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <select name="role">
+              {% for r in roles %}<option value="{{ r }}" {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}
+            </select>
+            <button class="btn small">Salva</button>
+          </form>
+          {% else %}<span class="muted">tu</span>{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -12,8 +12,7 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     login_manager.init_app(app)
 
-    # importare i modelli permette a Flask-Migrate di "vederli"
-    from app import models  # noqa: F401
+    from app import models  
 
     from app.main import bp as main_bp
     from app.auth import bp as auth_bp

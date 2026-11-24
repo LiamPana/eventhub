@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}I miei eventi · EventHub{% endblock %}
+{% block content %}
+  <h1>I miei eventi</h1>
+  <p><a class="btn" href="{{ url_for('events.create') }}">+ Nuovo evento</a></p>
+  {% if events %}
+  <table>
+    <thead><tr><th>Titolo</th><th>Data</th><th>Stato</th><th>Venduti</th><th></th></tr></thead>
+    <tbody>
+    {% for e in events %}
+      <tr>
+        <td><a href="{{ url_for('events.detail', event_id=e.id) }}">{{ e.title }}</a></td>
+        <td>{{ e.start_at|dt }}</td>
+        <td><span class="badge {{ e.status }}">{{ e.status }}</span></td>
+        <td>{{ e.tickets_sold }}/{{ e.capacity }}</td>
+        <td><a href="{{ url_for('events.report', event_id=e.id) }}">Report</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}<p class="muted">Non hai ancora creato eventi.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ event.title }} · EventHub{% endblock %}
+{% block content %}
+  <h1>{{ event.title }}
+    {% if event.status != 'published' %}<span class="badge {{ event.status }}">{{ event.status }}</span>{% endif %}
+  </h1>
+  <p class="muted">{{ event.start_at|dt }} → {{ event.end_at|dt }} · {{ event.location }} · organizzato da {{ event.organizer.username }}</p>
+  <p>{{ event.description }}</p>
+  <p>Posti disponibili: <strong>{{ event.tickets_left }}</strong> su {{ event.capacity }}</p>
+
+  <h2>Biglietti</h2>
+  {% if event.ticket_types %}
+  {% set can_buy = event.status == 'published' and not event.is_over %}
+  <form method="post" action="{{ url_for('events.buy', event_id=event.id) }}" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <table>
+      <thead><tr><th>Tipo</th><th>Prezzo</th><th>Disponibili</th><th>Quantità</th>{% if can_manage %}<th></th>{% endif %}</tr></thead>
+      <tbody>
+      {% for tt in event.ticket_types %}
+        <tr>
+          <td>{{ tt.name }}</td><td>{{ tt.price|money }}</td><td>{{ tt.available }}</td>
+          <td>
+            {% if can_buy and tt.available > 0 %}
+              <input type="number" name="qty_{{ tt.id }}" min="0" max="{{ [tt.available, event.tickets_left, 10]|min }}" value="0">
+            {% else %}<span class="muted">non disponibile</span>{% endif %}
+          </td>
+          {% if can_manage %}
+          <td>
+            <button class="link" formaction="{{ url_for('events.delete_ticket_type', event_id=event.id, type_id=tt.id) }}" formmethod="post">Elimina</button>
+          </td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% if can_buy %}
+      <div class="field">
+        <label for="discount_code">Codice sconto (facoltativo)</label>
+        <input id="discount_code" name="discount_code" maxlength="32">
+      </div>
+      {% if current_user.is_authenticated %}
+        <button class="btn">Acquista (pagamento simulato)</button>
+      {% else %}
+        <p><a href="{{ url_for('auth.login', next=request.path) }}">Accedi</a> per acquistare.</p>
+      {% endif %}
+    {% else %}
+      <p class="muted">Le vendite per questo evento non sono aperte.</p>
+    {% endif %}
+  </form>
+  {% else %}
+    <p class="muted">Nessun tipo di biglietto definito.</p>
+  {% endif %}
+
+  {% if can_manage %}
+  <section class="panel">
+    <h2>Gestione evento</h2>
+    <p>
+      <a class="btn small" href="{{ url_for('events.edit', event_id=event.id) }}">Modifica</a>
+      <a class="btn small" href="{{ url_for('events.add_ticket_type', event_id=event.id) }}">+ Tipo di biglietto</a>
+      <a class="btn small" href="{{ url_for('events.add_discount', event_id=event.id) }}">+ Codice sconto</a>
+      <a class="btn small" href="{{ url_for('events.report', event_id=event.id) }}">Report</a>
+    </p>
+    <form method="post" action="{{ url_for('events.change_status', event_id=event.id) }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      {% if event.status == 'draft' %}<button class="btn small" name="action" value="publish">Pubblica</button>{% endif %}
+      {% if event.status != 'cancelled' %}<button class="btn small danger" name="action" value="cancel">Annulla evento</button>{% endif %}
+    </form>
+    {% if event.discount_codes %}
+    <h3>Codici sconto</h3>
+    <table>
+      <thead><tr><th>Codice</th><th>Sconto</th><th>Usi</th><th>Scadenza</th></tr></thead>
+      <tbody>
+      {% for d in event.discount_codes %}
+        <tr><td>{{ d.code }}</td><td>{{ d.percent }}%</td><td>{{ d.used_count }}/{{ d.max_uses }}</td><td>{{ d.expires_at|dt }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </section>
+  {% endif %}
+{% endblock %}

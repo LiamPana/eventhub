@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block content %}
+  <h1>Nuovo tipo di biglietto</h1>
+  <p class="muted">{{ event.title }} · capienza {{ event.capacity }}, già assegnati {{ event.allocated_quantity }}</p>
+  <form method="post" class="form" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.name) }}
+    {{ field(form.price) }}
+    {{ field(form.quantity) }}
+    {{ form.submit(class="btn") }}
+  </form>
+{% endblock %}

@@ -21,5 +21,18 @@ services:
     restart: always
     ports:
       - 8080:8080
+  web:
+      build: .
+      container_name: eventhub_web
+      restart: unless-stopped
+      env_file: .env
+      environment:
+        DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}?charset=utf8mb4
+      ports:
+        - "5000:5000"
+      volumes:
+        - .:/app
+      command: sh -c "flask db upgrade && gunicorn -b 0.0.0.0:5000 --reload run:app"
 volumes:
   mysql_data:
+

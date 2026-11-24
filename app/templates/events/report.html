@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Report · {{ event.title }}{% endblock %}
+{% block content %}
+  <h1>Report: {{ event.title }}</h1>
+  <div class="stats">
+    <div class="stat"><span>{{ stats.sold }}/{{ stats.capacity }}</span>biglietti venduti ({{ stats.occupancy_percent }}%)</div>
+    <div class="stat"><span>{{ stats.revenue|money }}</span>incassi</div>
+    <div class="stat"><span>{{ stats.checked_in }}</span>ingressi registrati</div>
+  </div>
+  <table>
+    <thead><tr><th>Tipo</th><th>Prezzo</th><th>Venduti</th><th>Disponibili</th><th>Entrati</th></tr></thead>
+    <tbody>
+    {% for t in stats.ticket_types %}
+      <tr><td>{{ t.name }}</td><td>{{ t.price|money }}</td><td>{{ t.sold }}/{{ t.quantity }}</td>
+          <td>{{ t.quantity - t.sold }}</td><td>{{ t.checked_in }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p><a href="{{ url_for('events.detail', event_id=event.id) }}">← Torna all'evento</a></p>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}Check-in · EventHub{% endblock %}
+{% block content %}
+  <h1>Check-in ingressi</h1>
+  <form method="post" class="form" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.code, autofocus=True, autocomplete="off") }}
+    {{ form.submit(class="btn") }}
+  </form>
+  {% if ticket %}
+  <section class="panel ok">
+    <h2>Ingresso valido</h2>
+    <p>{{ ticket.event.title }} · {{ ticket.ticket_type.name }}<br>
+       Intestatario: {{ ticket.order.user.username }}</p>
+  </section>
+  {% endif %}
+{% endblock %}

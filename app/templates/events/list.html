@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "_macros.html" import event_card %}
+{% block title %}Eventi · EventHub{% endblock %}
+{% block content %}
+  <h1>Eventi</h1>
+  <form method="get" class="search">
+    <input type="search" name="q" value="{{ q }}" placeholder="Cerca per titolo o luogo">
+    <button class="btn">Cerca</button>
+  </form>
+  {% if pagination.items %}
+    <div class="grid">{% for e in pagination.items %}{{ event_card(e) }}{% endfor %}</div>
+    <div class="pager">
+      {% if pagination.has_prev %}<a href="{{ url_for('events.list_events', page=pagination.prev_num, q=q) }}">← Precedente</a>{% endif %}
+      <span>Pagina {{ pagination.page }} di {{ pagination.pages }}</span>
+      {% if pagination.has_next %}<a href="{{ url_for('events.list_events', page=pagination.next_num, q=q) }}">Successiva →</a>{% endif %}
+    </div>
+  {% else %}
+    <p class="muted">Nessun evento trovato.</p>
+  {% endif %}
+{% endblock %}

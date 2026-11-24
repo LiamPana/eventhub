@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}I miei biglietti · EventHub{% endblock %}
+{% block content %}
+  <h1>I miei biglietti</h1>
+  {% if tickets %}
+  <div class="grid">
+    {% for t in tickets %}
+    <article class="card ticket {{ 'used' if t.is_used }}">
+      <h3>{{ t.event.title }}</h3>
+      <p class="muted">{{ t.event.start_at|dt }} · {{ t.event.location }}</p>
+      <p>{{ t.ticket_type.name }} {% if t.is_used %}<span class="badge cancelled">usato</span>{% endif %}</p>
+      <img src="{{ url_for('events.ticket_qr', code=t.code) }}" alt="QR code del biglietto" width="160" height="160">
+      <p class="code">{{ t.code }}</p>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+    <p class="muted">Non hai ancora biglietti. <a href="{{ url_for('events.list_events') }}">Sfoglia gli eventi</a>.</p>
+  {% endif %}
+{% endblock %}

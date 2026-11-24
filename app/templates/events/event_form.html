@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% from "_macros.html" import field %}
+{% block title %}{{ title }} · EventHub{% endblock %}
+{% block content %}
+  <h1>{{ title }}</h1>
+  <form method="post" class="form" novalidate>
+    {{ form.hidden_tag() }}
+    {{ field(form.title) }}
+    {{ field(form.description, rows=5) }}
+    {{ field(form.location) }}
+    {{ field(form.start_at) }}
+    {{ field(form.end_at) }}
+    {{ field(form.capacity) }}
+    {{ form.submit(class="btn") }}
+  </form>
+{% endblock %}

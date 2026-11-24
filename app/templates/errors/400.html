@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}400 · EventHub{% endblock %}
+{% block content %}
+  <h1>400 · Richiesta non valida</h1>
+  <p>La richiesta non è valida o la sessione è scaduta. Ricarica la pagina e riprova.</p>
+  <a class="btn" href="{{ url_for('main.index') }}">Torna alla home</a>
+{% endblock %}
